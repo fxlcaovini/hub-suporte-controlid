@@ -181,7 +181,6 @@ body.light-theme .sidebar {
   gap: 12px;
   align-items: center;
   padding: 14px 0 20px;
-  background: linear-gradient(to bottom, var(--bg) 72%, transparent);
 }
 
 .search-wrap {
