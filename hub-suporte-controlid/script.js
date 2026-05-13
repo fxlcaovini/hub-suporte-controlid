@@ -1208,6 +1208,8 @@ let initialized = false;
 document.addEventListener("DOMContentLoaded", initApp);
 
 async function initApp() {
+  applySavedTheme();
+  setupThemeToggle();
   setupBackToTop();
   setupMobileMenu();
   bindGlobalEvents();
@@ -1911,6 +1913,28 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function setupThemeToggle() {
+  getById("themeToggle").addEventListener("click", () => {
+    const isLight = document.body.classList.toggle("light-theme");
+    localStorage.setItem(STORAGE_KEYS.theme, isLight ? "light" : "dark");
+    updateThemeIcon();
+  });
+}
+
+function applySavedTheme() {
+  const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
+  if (savedTheme === "light") {
+    document.body.classList.add("light-theme");
+  }
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const icon = getById("themeIcon");
+  if (!icon) return;
+  icon.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
 }
 
 function setupNotes() {
