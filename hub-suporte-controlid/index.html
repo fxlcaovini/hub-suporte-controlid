@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub de Suporte Control iD</title>
+  <meta name="description" content="Central interna de conhecimento para suporte técnico Control iD: RHID, REP iDClass, iDFace, comunicação com a nuvem, erros comuns e procedimentos." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section class="login-view" id="loginView">
+    <div class="login-card">
+      <div class="brand login-brand">
+        <div class="brand-mark">iD</div>
+        <div>
+          <strong>Hub de Suporte</strong>
+          <span>Control iD</span>
+        </div>
+      </div>
+
+      <p class="eyebrow">Acesso interno</p>
+      <h1>Entrar no Hub</h1>
+      <p class="login-description">
+        Usuários padrão consultam a base. Administradores também podem cadastrar, editar e remover conteúdos.
+      </p>
+
+      <form id="loginForm" class="login-form">
+        <label for="loginEmail">E-mail</label>
+        <input type="email" id="loginEmail" placeholder="seu.email@empresa.com" autocomplete="email" required />
+
+        <label for="loginPassword">Senha</label>
+        <input type="password" id="loginPassword" placeholder="Digite sua senha" autocomplete="current-password" required />
+
+        <button class="primary-button" type="submit">Entrar</button>
+        <p class="save-status" id="loginStatus" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell hidden" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">iD</div>
+        <div>
+          <strong>Hub de Suporte</strong>
+          <span>Control iD</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu" aria-label="Menu principal">
+        <button class="nav-link active" data-section="dashboard">🏠 Dashboard</button>
+        <button class="nav-link" data-section="primeiros-passos">🚀 Primeiros Passos</button>
+        <button class="nav-link" data-section="rhid">🕒 RHID</button>
+        <button class="nav-link" data-section="idclass">🧾 REP iDClass</button>
+        <button class="nav-link" data-section="idface">🙂 iDFace</button>
+        <button class="nav-link" data-section="nuvem">☁️ Comunicação</button>
+        <button class="nav-link" data-section="erros">⚠️ Erros Comuns</button>
+        <button class="nav-link" data-section="procedimentos">✅ Procedimentos</button>
+        <button class="nav-link" data-section="faq">❓ FAQ</button>
+        <button class="nav-link" data-section="favoritos">⭐ Favoritos</button>
+        <button class="nav-link" data-section="anotacoes">📝 Anotações</button>
+        <button class="nav-link admin-only hidden" data-section="admin">🛠️ Admin</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <small>Base interna de consulta e treinamento.</small>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="icon-button mobile-only" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+        <div class="search-wrap">
+          <span class="search-icon">🔎</span>
+          <input
+            type="search"
+            id="globalSearch"
+            placeholder="Pesquisar por RHID, iDClass, AFD, nuvem, IP, erro..."
+            autocomplete="off"
+          />
+        </div>
+
+        <select id="categoryFilter" class="category-filter" aria-label="Filtrar por categoria">
+          <option value="todos">Todas as categorias</option>
+        </select>
+
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema">
+          <span id="themeIcon">🌙</span>
+          <span class="theme-text">Tema</span>
+        </button>
+
+        <span class="user-pill" id="userRoleBadge">Padrão</span>
+        <button class="ghost-button" id="logoutButton" type="button">Sair</button>
+      </header>
+
+      <section id="searchResultsSection" class="search-results-section hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Busca global</p>
+            <h2>Resultados encontrados</h2>
+          </div>
+          <button class="ghost-button" id="clearSearch">Limpar busca</button>
+        </div>
+        <div id="searchSummary" class="muted-text"></div>
+        <div id="searchResults" class="content-grid"></div>
+      </section>
+
+      <section class="page-section active" id="dashboard">
+        <div class="hero">
+          <div class="hero-content">
+            <p class="eyebrow">Central interna de conhecimento</p>
+            <h1>Hub de Suporte Control iD</h1>
+            <p>
+              Consulte procedimentos, orientações, erros comuns, respostas prontas e materiais de apoio para atendimentos envolvendo RHID, REP iDClass, iDFace e comunicação com a nuvem.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-button" data-section-target="primeiros-passos">Começar treinamento</button>
+              <button class="secondary-button" data-section-target="erros">Ver erros comuns</button>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <span class="status-dot"></span>
+            <strong>Modo atendimento</strong>
+            <p>Use a busca para encontrar rapidamente uma orientação enquanto fala com o cliente.</p>
+            <div class="quick-tags">
+              <button data-keyword="AFD">AFD</button>
+              <button data-keyword="Portaria 671">Portaria 671</button>
+              <button data-keyword="nuvem">Nuvem</button>
+              <button data-keyword="IP">IP</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Módulos principais</p>
+            <h2>Escolha uma área para consultar</h2>
+          </div>
+        </div>
+
+        <div class="module-grid" id="moduleCards"></div>
+      </section>
+
+      <section class="page-section" id="primeiros-passos">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Treinamento inicial</p>
+            <h2>Primeiros Passos</h2>
+            <p>Orientações para novos colaboradores organizarem o atendimento com segurança e clareza.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="primeirosPassosContent"></div>
+      </section>
+
+      <section class="page-section" id="rhid">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Sistema de ponto</p>
+            <h2>RHID</h2>
+            <p>Conceitos, cadastros, jornadas, tratamento de ponto, relatórios e comunicação com equipamentos.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="rhidContent"></div>
+      </section>
+
+      <section class="page-section" id="idclass">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">REP</p>
+            <h2>REP iDClass</h2>
+            <p>Procedimentos de rede, AFD, eventos sensíveis, data e hora, colaboradores e comunicação com RHID.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="idclassContent"></div>
+      </section>
+
+      <section class="page-section" id="idface">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Reconhecimento facial</p>
+            <h2>iDFace</h2>
+            <p>Cadastro facial, usuários, sincronização, rede e boas práticas para reconhecimento.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="idfaceContent"></div>
+      </section>
+
+      <section class="page-section" id="nuvem">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Rede e comunicação</p>
+            <h2>Comunicação com a Nuvem</h2>
+            <p>Checklist de diagnóstico para identificar problemas de rede, DNS, firewall, portas e configuração.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="nuvemContent"></div>
+      </section>
+
+      <section class="page-section" id="erros">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Base de troubleshooting</p>
+            <h2>Erros Comuns</h2>
+            <p>Cards em formato accordion com causas, análise e solução recomendada.</p>
+          </div>
+        </div>
+        <div class="accordion-list" id="errosContent"></div>
+      </section>
+
+      <section class="page-section" id="procedimentos">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Checklists</p>
+            <h2>Procedimentos de Atendimento</h2>
+            <p>Fluxos para atendimento inicial, coleta de informações, diagnóstico e encerramento.</p>
+          </div>
+        </div>
+        <div class="content-grid" id="procedimentosContent"></div>
+      </section>
+
+      <section class="page-section" id="faq">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Perguntas frequentes</p>
+            <h2>FAQ</h2>
+            <p>Respostas rápidas para dúvidas comuns durante o atendimento.</p>
+          </div>
+        </div>
+        <div class="accordion-list" id="faqContent"></div>
+      </section>
+
+      <section class="page-section" id="favoritos">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Conteúdos salvos</p>
+            <h2>Favoritos</h2>
+            <p>Itens marcados para acesso rápido. Os dados ficam salvos no seu usuário.</p>
+          </div>
+          <button class="ghost-button danger" id="clearFavorites">Limpar favoritos</button>
+        </div>
+        <div id="favoritesEmpty" class="empty-state">
+          <strong>Nenhum favorito salvo.</strong>
+          <p>Abra um conteúdo e clique em “Favoritar” para aparecer aqui.</p>
+        </div>
+        <div class="content-grid" id="favoritosContent"></div>
+      </section>
+
+      <section class="page-section" id="anotacoes">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Uso pessoal</p>
+            <h2>Anotações</h2>
+            <p>Registre lembretes, links, procedimentos observados ou pontos importantes de atendimentos.</p>
+          </div>
+        </div>
+
+        <div class="notes-card">
+          <label for="personalNotes">Minhas anotações</label>
+          <textarea id="personalNotes" placeholder="Exemplo: Cliente X estava com DNS incorreto. Validar gateway antes de escalar..."></textarea>
+          <div class="notes-actions">
+            <button class="primary-button" id="saveNotes">Salvar anotações</button>
+            <button class="ghost-button danger" id="clearNotes">Limpar</button>
+          </div>
+          <p class="save-status" id="notesStatus" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="page-section" id="admin">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Painel administrativo</p>
+            <h2>Cadastrar conteúdos</h2>
+            <p>Adicione tópicos em qualquer seção. O novo conteúdo já aparece com o mesmo visual dos cards do Hub.</p>
+          </div>
+        </div>
+
+        <div class="admin-layout">
+          <form class="admin-form content-card" id="adminContentForm">
+            <input type="hidden" id="adminContentId" />
+
+            <div class="form-title-row">
+              <div>
+                <p class="eyebrow">Conteúdo</p>
+                <h3 id="adminFormTitle">Novo tópico</h3>
+              </div>
+              <button class="ghost-button" type="button" id="newContentButton">Novo</button>
+            </div>
+
+            <label for="adminTitle">Título</label>
+            <input type="text" id="adminTitle" required placeholder="Ex: Equipamento não comunica" />
+
+            <div class="admin-two-columns">
+              <div>
+                <label for="adminCategory">Seção</label>
+                <select id="adminCategory" required>
+                  <option value="primeiros-passos">Primeiros Passos</option>
+                  <option value="rhid">RHID</option>
+                  <option value="idclass">REP iDClass</option>
+                  <option value="idface">iDFace</option>
+                  <option value="nuvem">Comunicação</option>
+                  <option value="erros">Erros Comuns</option>
+                  <option value="procedimentos">Procedimentos</option>
+                  <option value="faq">FAQ</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="adminPublished">Status</label>
+                <select id="adminPublished">
+                  <option value="true">Publicado</option>
+                  <option value="false">Rascunho</option>
+                </select>
+              </div>
+            </div>
+
+            <label for="adminDescription">Descrição</label>
+            <textarea id="adminDescription" rows="3" required placeholder="Resumo que aparece no card."></textarea>
+
+            <label for="adminTags">Tags separadas por vírgula</label>
+            <input type="text" id="adminTags" placeholder="RHID, Rede, AFD, Portaria 671" />
+
+            <label for="adminKeywords">Palavras-chave separadas por vírgula</label>
+            <input type="text" id="adminKeywords" placeholder="senha, IP, cadastro, comunicação" />
+
+            <label for="adminCauses">Possíveis causas, uma por linha</label>
+            <textarea id="adminCauses" rows="4" placeholder="Use principalmente para Erros Comuns."></textarea>
+
+            <label for="adminSteps">Passos / análise / checklist, um por linha</label>
+            <textarea id="adminSteps" rows="6" placeholder="Cada linha vira um item no card."></textarea>
+
+            <label for="adminSolution">Solução / resposta final</label>
+            <textarea id="adminSolution" rows="4" placeholder="Solução recomendada ou resposta da FAQ."></textarea>
+
+            <label for="adminReadyAnswer">Orientação pronta para copiar</label>
+            <textarea id="adminReadyAnswer" rows="4" placeholder="Opcional. Se deixar vazio, o sistema monta uma orientação automática."></textarea>
+
+            <div class="notes-actions">
+              <button class="primary-button" type="submit">Salvar conteúdo</button>
+              <button class="ghost-button" type="button" id="refreshContentButton">Atualizar lista</button>
+            </div>
+            <p class="save-status" id="adminStatus" aria-live="polite"></p>
+          </form>
+
+          <div class="admin-list content-card">
+            <div class="form-title-row">
+              <div>
+                <p class="eyebrow">Banco de dados</p>
+                <h3>Conteúdos cadastrados</h3>
+              </div>
+            </div>
+            <div id="adminContentList" class="admin-content-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Voltar ao topo">↑</button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
