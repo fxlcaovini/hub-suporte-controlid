@@ -1,7 +1,3 @@
--- ==========================================================
--- Hub de Suporte Control iD - Supabase
--- Execute no Supabase: SQL Editor > New Query > Run
--- ==========================================================
 
 create extension if not exists pgcrypto;
 
@@ -274,16 +270,3 @@ set
   ready_answer = excluded.ready_answer,
   published = excluded.published;
 
--- ==========================================================
--- Depois de criar usuários em Authentication > Users,
--- defina quem será admin:
--- ==========================================================
--- update public.profiles
--- set role = 'admin'
--- where email = 'admin@controlid.com';
-
--- update public.profiles
--- set role = 'viewer'
--- where email = 'suporte@controlid.com';
-
--- select email, role from public.profiles order by created_at desc;

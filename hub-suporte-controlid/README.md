@@ -50,7 +50,7 @@ where email = 'admin@controlid.com';
 
 update public.profiles
 set role = 'viewer'
-where email = 'suporte@controlid.com';
+where email = 'suporte.revendas@controlid.com';
 ```
 
 ## 3. Configurar script.js
