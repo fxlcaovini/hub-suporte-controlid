@@ -1924,18 +1924,9 @@ function setupThemeToggle() {
 }
 
 function applySavedTheme() {
-  const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
-  if (savedTheme === "light") {
-    document.body.classList.add("light-theme");
-  }
+  document.body.classList.remove("light-theme");
+}
   updateThemeIcon();
-}
-
-function updateThemeIcon() {
-  const icon = getById("themeIcon");
-  if (!icon) return;
-  icon.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
-}
 
 function setupNotes() {
   getById("saveNotes").addEventListener("click", saveNotesToDatabase);
