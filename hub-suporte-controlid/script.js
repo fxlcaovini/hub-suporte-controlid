@@ -6,8 +6,8 @@
 // Configure com os dados do seu projeto Supabase.
 // Use somente Project URL e publishable/anon public key.
 // Nunca coloque service_role ou secret key no frontend.
-const SUPABASE_URL = "COLE_AQUI_A_URL_DO_SUPABASE";
-const SUPABASE_PUBLISHABLE_KEY = "COLE_AQUI_A_CHAVE_PUBLICA_SUPABASE";
+const SUPABASE_URL = "https://rutzxvmiadxoghaiqyvh.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_UdFT4GrIpB4f4vrbWC5Btg_vpvwZfiW";
 
 const STORAGE_KEYS = {
   theme: "controlid_hub_theme"
