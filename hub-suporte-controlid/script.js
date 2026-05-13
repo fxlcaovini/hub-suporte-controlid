@@ -1209,7 +1209,6 @@ document.addEventListener("DOMContentLoaded", initApp);
 
 async function initApp() {
   applySavedTheme();
-  setupThemeToggle();
   setupBackToTop();
   setupMobileMenu();
   bindGlobalEvents();
@@ -1915,18 +1914,13 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
-function setupThemeToggle() {
-  getById("themeToggle").addEventListener("click", () => {
-    const isLight = document.body.classList.toggle("light-theme");
-    localStorage.setItem(STORAGE_KEYS.theme, isLight ? "light" : "dark");
-    updateThemeIcon();
-  });
-}
+
 
 function applySavedTheme() {
   document.body.classList.remove("light-theme");
+  localStorage.setItem(STORAGE_KEYS.theme, "dark");
 }
-  updateThemeIcon();
+
 
 function setupNotes() {
   getById("saveNotes").addEventListener("click", saveNotesToDatabase);
