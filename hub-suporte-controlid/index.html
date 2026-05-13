@@ -69,11 +69,11 @@
         <button class="icon-button mobile-only" id="menuToggle" aria-label="Abrir menu">☰</button>
 
         <div class="search-wrap">
-          <span class="search-icon">🔎</span>
+          <span class="search-icon"></span>
           <input
             type="search"
             id="globalSearch"
-            placeholder="Pesquisar por RHID, iDClass, AFD, nuvem, IP, erro..."
+            placeholder="Busque aqui..."
             autocomplete="off"
           />
         </div>
@@ -81,13 +81,6 @@
         <select id="categoryFilter" class="category-filter" aria-label="Filtrar por categoria">
           <option value="todos">Todas as categorias</option>
         </select>
-
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema">
-          <span id="themeIcon">🌙</span>
-          <span class="theme-text">Tema</span>
-        </button>
-
-        <span class="user-pill" id="userRoleBadge">Padrão</span>
         <button class="ghost-button" id="logoutButton" type="button">Sair</button>
       </header>
 
@@ -117,14 +110,9 @@
             </div>
           </div>
           <div class="hero-panel">
-            <span class="status-dot"></span>
-            <strong>Modo atendimento</strong>
-            <p>Use a busca para encontrar rapidamente uma orientação enquanto fala com o cliente.</p>
+            <strong>titulo dps</strong>
+            <p>lembrar de colocar um texto dps aq</p>
             <div class="quick-tags">
-              <button data-keyword="AFD">AFD</button>
-              <button data-keyword="Portaria 671">Portaria 671</button>
-              <button data-keyword="nuvem">Nuvem</button>
-              <button data-keyword="IP">IP</button>
             </div>
           </div>
         </div>
@@ -155,7 +143,7 @@
           <div>
             <p class="eyebrow">Sistema de ponto</p>
             <h2>RHID</h2>
-            <p>Conceitos, cadastros, jornadas, tratamento de ponto, relatórios e comunicação com equipamentos.</p>
+            <p>Conceitos, funcionalidades, apuração, relatórios, coluna mix, comunicação com equipamentos, etc.</p>
           </div>
         </div>
         <div class="content-grid" id="rhidContent"></div>
@@ -164,9 +152,9 @@
       <section class="page-section" id="idclass">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">REP</p>
+            <p class="eyebrow">REP-C</p>
             <h2>REP iDClass</h2>
-            <p>Procedimentos de rede, AFD, eventos sensíveis, data e hora, colaboradores e comunicação com RHID.</p>
+            <p>Procedimentos de rede, AFD, cadastros e comunicação.</p>
           </div>
         </div>
         <div class="content-grid" id="idclassContent"></div>
@@ -175,9 +163,9 @@
       <section class="page-section" id="idface">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Reconhecimento facial</p>
+            <p class="eyebrow">REP-P</p>
             <h2>iDFace</h2>
-            <p>Cadastro facial, usuários, sincronização, rede e boas práticas para reconhecimento.</p>
+            <p>Cadastros, usuários, sincronização, rede, integrações, .</p>
           </div>
         </div>
         <div class="content-grid" id="idfaceContent"></div>
@@ -187,7 +175,7 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">Rede e comunicação</p>
-            <h2>Comunicação com a Nuvem</h2>
+            <h2>Comunicação com o iDCloud / Rede Local</h2>
             <p>Checklist de diagnóstico para identificar problemas de rede, DNS, firewall, portas e configuração.</p>
           </div>
         </div>
@@ -197,9 +185,9 @@
       <section class="page-section" id="erros">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Base de troubleshooting</p>
+            <p class="eyebrow">Base de erros</p>
             <h2>Erros Comuns</h2>
-            <p>Cards em formato accordion com causas, análise e solução recomendada.</p>
+            <p>Causas, análise e solução recomendada.</p>
           </div>
         </div>
         <div class="accordion-list" id="errosContent"></div>
@@ -208,9 +196,9 @@
       <section class="page-section" id="procedimentos">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Checklists</p>
-            <h2>Procedimentos de Atendimento</h2>
-            <p>Fluxos para atendimento inicial, coleta de informações, diagnóstico e encerramento.</p>
+            <p class="eyebrow">Donwloads e Procedimentos padrão</p>
+            <h2>Repositório</h2>
+            <p>Links, modelos de emails, arquivos, entre outros</p>
           </div>
         </div>
         <div class="content-grid" id="procedimentosContent"></div>
@@ -248,7 +236,7 @@
           <div>
             <p class="eyebrow">Uso pessoal</p>
             <h2>Anotações</h2>
-            <p>Registre lembretes, links, procedimentos observados ou pontos importantes de atendimentos.</p>
+            <p>Registre lembretes, links, procedimentos observados ou pontos importantes.</p>
           </div>
         </div>
 
@@ -268,7 +256,7 @@
           <div>
             <p class="eyebrow">Painel administrativo</p>
             <h2>Cadastrar conteúdos</h2>
-            <p>Adicione tópicos em qualquer seção. O novo conteúdo já aparece com o mesmo visual dos cards do Hub.</p>
+            <p>Adicione tópicos em qualquer seção.</p>
           </div>
         </div>
 
