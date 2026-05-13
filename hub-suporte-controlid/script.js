@@ -16,49 +16,49 @@ const STORAGE_KEYS = {
 const modules = [
   {
     "id": "primeiros-passos",
-    "icon": "🚀",
+    "icon": "",
     "title": "Primeiros Passos",
     "description": "Fluxo de suporte, organização do atendimento, identificação de problemas e boas práticas."
   },
   {
     "id": "rhid",
-    "icon": "🕒",
+    "icon": "",
     "title": "RHID",
     "description": "Cadastros, jornadas, tratamento de ponto, espelho, relatórios e comunicação."
   },
   {
     "id": "idclass",
-    "icon": "🧾",
+    "icon": "",
     "title": "REP iDClass",
     "description": "Configuração, AFD, eventos sensíveis, rede, data/hora e comunicação com RHID."
   },
   {
     "id": "idface",
-    "icon": "🙂",
+    "icon": "",
     "title": "iDFace",
     "description": "Cadastro facial, usuários, sincronização, rede e reconhecimento facial."
   },
   {
     "id": "nuvem",
-    "icon": "☁️",
+    "icon": "",
     "title": "Comunicação com a Nuvem",
     "description": "Rede, DNS, firewall, portas, IP, gateway, máscara, DNS e diagnóstico."
   },
   {
     "id": "erros",
-    "icon": "⚠️",
+    "icon": "",
     "title": "Erros Comuns",
     "description": "Base de troubleshooting com possíveis causas, análise e soluções."
   },
   {
     "id": "procedimentos",
-    "icon": "✅",
+    "icon": "",
     "title": "Procedimentos de Atendimento",
     "description": "Checklists para conduzir, diagnosticar, escalar e finalizar chamados."
   },
   {
     "id": "faq",
-    "icon": "❓",
+    "icon": "",
     "title": "FAQ",
     "description": "Perguntas frequentes para consulta rápida durante o atendimento."
   }
