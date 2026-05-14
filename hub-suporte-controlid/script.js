@@ -1204,6 +1204,8 @@ let allSearchable = [];
 let favorites = [];
 let contentRows = [];
 let initialized = false;
+let adminSelectedCategory = "primeiros-passos";
+let inlineEditorState = null;
 
 document.addEventListener("DOMContentLoaded", initApp);
 
@@ -1480,9 +1482,18 @@ function renderContentSections() {
   Object.entries(mapping).forEach(([category, elementId]) => {
     const items = contents.filter(item => item.category === category);
     const container = getById(elementId);
-    container.innerHTML = items.length
-      ? items.map(createContentCard).join("")
-      : createEmptyState(isAdmin() ? "Nenhum conteúdo cadastrado." : "Nenhum conteúdo publicado.", isAdmin() ? "Use o painel Admin para cadastrar." : "Aguarde a publicação de novos materiais.");
+    const inlineEditor = createInlineEditorForCategory(category);
+
+    if (items.length) {
+      container.innerHTML = inlineEditor + items.map(createContentCard).join("");
+      return;
+    }
+
+    container.innerHTML = inlineEditor || createSectionEmptyState(
+      category,
+      isAdmin() ? "Nenhum conteúdo cadastrado." : "Nenhum conteúdo publicado.",
+      isAdmin() ? "Cadastre o primeiro conteúdo diretamente nesta seção." : "Aguarde a publicação de novos materiais."
+    );
   });
 
   bindCardActions(document);
@@ -1513,8 +1524,10 @@ function createContentCard(item) {
 
 function renderErrorAccordions() {
   const container = getById("errosContent");
+  const inlineEditor = createInlineEditorForCategory("erros");
+
   container.innerHTML = errors.length
-    ? errors.map(item => `
+    ? inlineEditor + errors.map(item => `
     <article class="accordion-item" data-content-id="${item.id}">
       <button class="accordion-header" aria-expanded="false">
         <span class="accordion-title">
@@ -1556,7 +1569,7 @@ function renderErrorAccordions() {
       </div>
     </article>
   `).join("")
-    : createEmptyState(isAdmin() ? "Nenhum erro cadastrado." : "Nenhum erro publicado.", isAdmin() ? "Use o painel Admin para cadastrar erros comuns." : "Aguarde a publicação de novos materiais.");
+    : inlineEditor || createSectionEmptyState("erros", isAdmin() ? "Nenhum erro cadastrado." : "Nenhum erro publicado.", isAdmin() ? "Cadastre o primeiro erro comum diretamente nesta seção." : "Aguarde a publicação de novos materiais.");
 
   bindAccordions(container);
   bindCardActions(container);
@@ -1564,8 +1577,10 @@ function renderErrorAccordions() {
 
 function renderFaqAccordions() {
   const container = getById("faqContent");
+  const inlineEditor = createInlineEditorForCategory("faq");
+
   container.innerHTML = faqItems.length
-    ? faqItems.map(item => `
+    ? inlineEditor + faqItems.map(item => `
     <article class="accordion-item" data-content-id="${item.id}">
       <button class="accordion-header" aria-expanded="false">
         <span class="accordion-title">
@@ -1595,7 +1610,7 @@ function renderFaqAccordions() {
       </div>
     </article>
   `).join("")
-    : createEmptyState(isAdmin() ? "Nenhuma FAQ cadastrada." : "Nenhuma FAQ publicada.", isAdmin() ? "Use o painel Admin para cadastrar perguntas frequentes." : "Aguarde a publicação de novos materiais.");
+    : inlineEditor || createSectionEmptyState("faq", isAdmin() ? "Nenhuma FAQ cadastrada." : "Nenhuma FAQ publicada.", isAdmin() ? "Cadastre a primeira pergunta frequente diretamente nesta seção." : "Aguarde a publicação de novos materiais.");
 
   bindAccordions(container);
   bindCardActions(container);
@@ -1605,7 +1620,7 @@ function renderAdminCardActions(id) {
   if (!isAdmin()) return "";
   return `
     <span class="admin-card-actions">
-      <button class="card-action" data-edit-content="${id}">Editar</button>
+      <button class="card-action" data-edit-content="${id}" data-edit-mode="inline">Editar</button>
       <button class="ghost-button danger" data-delete-content="${id}">Excluir</button>
     </span>
   `;
@@ -2055,9 +2070,38 @@ function bindGlobalEvents() {
       return;
     }
 
+    const addButton = event.target.closest("[data-add-content]");
+    if (addButton) {
+      openInlineEditor(addButton.dataset.addContent);
+      return;
+    }
+
+    const cancelInlineButton = event.target.closest("[data-cancel-inline-form]");
+    if (cancelInlineButton) {
+      closeInlineEditor();
+      return;
+    }
+
+    const adminFilterButton = event.target.closest("[data-admin-category-filter]");
+    if (adminFilterButton) {
+      adminSelectedCategory = adminFilterButton.dataset.adminCategoryFilter;
+      renderAdminList();
+      return;
+    }
+
+    const adminNewButton = event.target.closest("[data-admin-new-category]");
+    if (adminNewButton) {
+      openAdminNewContent(adminNewButton.dataset.adminNewCategory);
+      return;
+    }
+
     const editButton = event.target.closest("[data-edit-content]");
     if (editButton) {
-      editAdminContent(editButton.dataset.editContent);
+      if (editButton.dataset.editMode === "admin") {
+        editAdminContent(editButton.dataset.editContent);
+      } else {
+        editInlineContent(editButton.dataset.editContent);
+      }
       return;
     }
 
@@ -2065,6 +2109,14 @@ function bindGlobalEvents() {
     if (deleteButton) {
       await deleteAdminContent(deleteButton.dataset.deleteContent);
     }
+  });
+
+  document.addEventListener("submit", async event => {
+    const inlineForm = event.target.closest("[data-inline-content-form]");
+    if (!inlineForm) return;
+
+    event.preventDefault();
+    await saveInlineContent(inlineForm);
   });
 
   getById("clearFavorites").addEventListener("click", async () => {
@@ -2129,26 +2181,75 @@ function getItemById(id) {
   return contentRows.find(item => item.id === id);
 }
 
+function fillAdminForm(item) {
+  getById("adminFormTitle").textContent = item?.id ? "Editar conteúdo" : "Novo tópico";
+  getById("adminContentId").value = item?.id || "";
+  getById("adminTitle").value = item?.title || "";
+  getById("adminCategory").value = item?.category || adminSelectedCategory || "primeiros-passos";
+  getById("adminPublished").value = String(item?.published !== false);
+  getById("adminDescription").value = item?.description || "";
+  getById("adminTags").value = (item?.tags || []).join(", ");
+  getById("adminKeywords").value = (item?.keywords || []).join(", ");
+  getById("adminCauses").value = (item?.causes || []).join("\n");
+  getById("adminSteps").value = (item?.steps || item?.analysis || []).join("\n");
+  getById("adminSolution").value = item?.solution || item?.answer || "";
+  getById("adminReadyAnswer").value = item?.ready_answer || "";
+}
+
 function editAdminContent(id) {
   if (!isAdmin()) return;
 
   const item = getItemById(id);
   if (!item) return;
 
-  getById("adminFormTitle").textContent = "Editar conteúdo";
-  getById("adminContentId").value = item.id;
-  getById("adminTitle").value = item.title || "";
-  getById("adminCategory").value = item.category || "primeiros-passos";
-  getById("adminPublished").value = String(item.published !== false);
-  getById("adminDescription").value = item.description || "";
-  getById("adminTags").value = (item.tags || []).join(", ");
-  getById("adminKeywords").value = (item.keywords || []).join(", ");
-  getById("adminCauses").value = (item.causes || []).join("\n");
-  getById("adminSteps").value = (item.steps || item.analysis || []).join("\n");
-  getById("adminSolution").value = item.solution || item.answer || "";
-  getById("adminReadyAnswer").value = item.ready_answer || "";
-
+  adminSelectedCategory = item.category || adminSelectedCategory;
+  fillAdminForm(item);
   showAdminMessage("Editando: " + item.title, false);
+  renderAdminList();
+  navigateTo("admin");
+}
+
+function editInlineContent(id) {
+  if (!isAdmin()) return;
+
+  const item = getItemById(id);
+  if (!item) return;
+
+  openInlineEditor(item.category, id);
+}
+
+function openInlineEditor(category, id = "") {
+  if (!isAdmin()) return;
+
+  const item = id ? getItemById(id) : null;
+  const targetCategory = item?.category || category || "primeiros-passos";
+
+  inlineEditorState = {
+    category: targetCategory,
+    id: id || ""
+  };
+
+  renderEverything();
+  navigateTo(targetCategory);
+
+  window.setTimeout(() => {
+    const form = document.querySelector("[data-inline-content-form]");
+    if (form) form.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
+}
+
+function closeInlineEditor() {
+  inlineEditorState = null;
+  renderEverything();
+}
+
+function openAdminNewContent(category) {
+  if (!isAdmin()) return;
+
+  adminSelectedCategory = category || adminSelectedCategory || "primeiros-passos";
+  fillAdminForm({ category: adminSelectedCategory, published: true });
+  showAdminMessage("Novo conteúdo em: " + (categoryNames[adminSelectedCategory] || adminSelectedCategory), false);
+  renderAdminList();
   navigateTo("admin");
 }
 
@@ -2186,59 +2287,118 @@ async function saveAdminContent(event) {
 
   const id = getById("adminContentId").value;
   const category = getById("adminCategory").value;
-  const type = category === "erros" ? "error" : category === "faq" ? "faq" : "card";
-  const solution = getById("adminSolution").value.trim();
-
-  const payload = {
+  const payload = buildAdminPayloadFromValues({
     category,
-    type,
-    title: getById("adminTitle").value.trim(),
-    description: getById("adminDescription").value.trim(),
-    tags: parseCommaList(getById("adminTags").value),
-    keywords: parseCommaList(getById("adminKeywords").value),
-    causes: parseLineList(getById("adminCauses").value),
-    steps: parseLineList(getById("adminSteps").value),
-    analysis: parseLineList(getById("adminSteps").value),
-    solution,
-    answer: category === "faq" ? solution : "",
-    ready_answer: getById("adminReadyAnswer").value.trim(),
-    published: getById("adminPublished").value === "true",
-    updated_by: currentUser.id
-  };
+    title: getById("adminTitle").value,
+    description: getById("adminDescription").value,
+    tags: getById("adminTags").value,
+    keywords: getById("adminKeywords").value,
+    causes: getById("adminCauses").value,
+    steps: getById("adminSteps").value,
+    solution: getById("adminSolution").value,
+    readyAnswer: getById("adminReadyAnswer").value,
+    published: getById("adminPublished").value
+  });
 
   if (!payload.title || !payload.description) {
     showAdminMessage("Preencha título e descrição.", true);
     return;
   }
 
-  let result;
-  if (id) {
-    result = await supabaseClient
-      .from("hub_contents")
-      .update(payload)
-      .eq("id", id);
-  } else {
-    payload.created_by = currentUser.id;
-    result = await supabaseClient
-      .from("hub_contents")
-      .insert(payload);
-  }
+  const result = await upsertContent(id, payload);
 
   if (result.error) {
     showAdminMessage("Erro ao salvar: " + result.error.message, true);
     return;
   }
 
+  adminSelectedCategory = payload.category;
   showAdminMessage(id ? "Conteúdo atualizado com sucesso." : "Conteúdo cadastrado com sucesso.", false);
   resetAdminForm();
   await loadAllData();
   renderEverything();
 }
 
+async function saveInlineContent(form) {
+  if (!isAdmin()) {
+    showToast("Seu usuário não possui permissão para cadastrar.");
+    return;
+  }
+
+  const id = form.dataset.contentId || "";
+  const category = form.dataset.category || form.elements.category?.value || "primeiros-passos";
+  const payload = buildAdminPayloadFromValues({
+    category,
+    title: form.elements.title?.value,
+    description: form.elements.description?.value,
+    tags: form.elements.tags?.value,
+    keywords: form.elements.keywords?.value,
+    causes: form.elements.causes?.value,
+    steps: form.elements.steps?.value,
+    solution: form.elements.solution?.value,
+    readyAnswer: form.elements.readyAnswer?.value,
+    published: form.elements.published?.value
+  });
+
+  if (!payload.title || !payload.description) {
+    showToast("Preencha título e descrição.");
+    return;
+  }
+
+  const result = await upsertContent(id, payload);
+
+  if (result.error) {
+    showToast("Erro ao salvar: " + result.error.message);
+    return;
+  }
+
+  inlineEditorState = null;
+  showToast(id ? "Conteúdo atualizado." : "Conteúdo cadastrado.");
+  await loadAllData();
+  renderEverything();
+  navigateTo(payload.category);
+}
+
+function buildAdminPayloadFromValues(values) {
+  const category = values.category;
+  const solution = String(values.solution || "").trim();
+
+  return {
+    category,
+    type: category === "erros" ? "error" : category === "faq" ? "faq" : "card",
+    title: String(values.title || "").trim(),
+    description: String(values.description || "").trim(),
+    tags: parseCommaList(values.tags),
+    keywords: parseCommaList(values.keywords),
+    causes: parseLineList(values.causes),
+    steps: parseLineList(values.steps),
+    analysis: parseLineList(values.steps),
+    solution,
+    answer: category === "faq" ? solution : "",
+    ready_answer: String(values.readyAnswer || "").trim(),
+    published: String(values.published) === "true",
+    updated_by: currentUser.id
+  };
+}
+
+async function upsertContent(id, payload) {
+  if (id) {
+    return supabaseClient
+      .from("hub_contents")
+      .update(payload)
+      .eq("id", id);
+  }
+
+  return supabaseClient
+    .from("hub_contents")
+    .insert({
+      ...payload,
+      created_by: currentUser.id
+    });
+}
+
 function resetAdminForm() {
-  getById("adminContentForm").reset();
-  getById("adminContentId").value = "";
-  getById("adminFormTitle").textContent = "Novo tópico";
+  fillAdminForm({ category: adminSelectedCategory || "primeiros-passos", published: true });
   showAdminMessage("", false);
 }
 
@@ -2246,25 +2406,142 @@ function renderAdminList() {
   const container = getById("adminContentList");
   if (!container || !isAdmin()) return;
 
-  if (!contentRows.length) {
-    container.innerHTML = createEmptyState("Nenhum conteúdo cadastrado.", "Use o formulário para criar o primeiro tópico.");
-    return;
+  const categories = Object.keys(categoryNames);
+  if (!categories.includes(adminSelectedCategory)) {
+    adminSelectedCategory = categories[0];
   }
 
-  container.innerHTML = contentRows.map(item => `
-    <article class="admin-list-item">
-      <div class="card-meta">
-        <span class="tag">${categoryNames[item.category] || item.category}</span>
-        <span class="tag">${item.published ? "Publicado" : "Rascunho"}</span>
+  const categoryButtons = categories.map(category => {
+    const total = contentRows.filter(item => item.category === category).length;
+    return `
+      <button
+        type="button"
+        class="admin-category-tab ${adminSelectedCategory === category ? "active" : ""}"
+        data-admin-category-filter="${category}"
+      >
+        ${categoryNames[category]}
+        <span>${total}</span>
+      </button>
+    `;
+  }).join("");
+
+  const filteredItems = contentRows.filter(item => item.category === adminSelectedCategory);
+  const categoryLabel = categoryNames[adminSelectedCategory] || adminSelectedCategory;
+
+  container.innerHTML = `
+    <div class="admin-category-panel">
+      <div class="admin-category-tabs">${categoryButtons}</div>
+
+      <div class="admin-category-heading">
+        <div>
+          <p class="eyebrow">Seção selecionada</p>
+          <h4>${escapeHtml(categoryLabel)}</h4>
+          <p>${filteredItems.length} conteúdo(s) nesta seção.</p>
+        </div>
+        <button class="primary-button" type="button" data-admin-new-category="${adminSelectedCategory}">
+          Adicionar novo
+        </button>
       </div>
-      <h4>${escapeHtml(item.title)}</h4>
-      <p>${escapeHtml(item.description || "")}</p>
-      <div class="admin-item-actions">
-        <button class="card-action" data-edit-content="${item.id}">Editar</button>
-        <button class="ghost-button danger" data-delete-content="${item.id}">Excluir</button>
+
+      <div class="admin-filtered-list">
+        ${filteredItems.length ? filteredItems.map(item => `
+          <article class="admin-list-item">
+            <div class="card-meta">
+              <span class="tag">${categoryNames[item.category] || item.category}</span>
+              <span class="tag">${item.published ? "Publicado" : "Rascunho"}</span>
+            </div>
+            <h4>${escapeHtml(item.title)}</h4>
+            <p>${escapeHtml(item.description || "")}</p>
+            <div class="admin-item-actions">
+              <button class="card-action" data-edit-content="${item.id}" data-edit-mode="admin">Editar no Admin</button>
+              <button class="card-action" data-edit-content="${item.id}" data-edit-mode="inline">Editar na seção</button>
+              <button class="ghost-button danger" data-delete-content="${item.id}">Excluir</button>
+            </div>
+          </article>
+        `).join("") : createEmptyState("Nenhum conteúdo nesta seção.", "Clique em “Adicionar novo” para criar o primeiro item.")}
       </div>
-    </article>
-  `).join("");
+    </div>
+  `;
+}
+
+function createSectionEmptyState(category, title, text) {
+  return `
+    <div class="empty-state section-empty-state">
+      <strong>${escapeHtml(title)}</strong>
+      <p>${escapeHtml(text)}</p>
+      ${isAdmin() ? `<button class="primary-button" type="button" data-add-content="${category}">Adicionar novo</button>` : ""}
+    </div>
+  `;
+}
+
+function createInlineEditorForCategory(category) {
+  if (!isAdmin() || !inlineEditorState || inlineEditorState.category !== category) return "";
+
+  const item = inlineEditorState.id ? getItemById(inlineEditorState.id) : null;
+  return createInlineEditorForm(category, item);
+}
+
+function createInlineEditorForm(category, item = null) {
+  const isEditing = Boolean(item?.id);
+  const label = categoryNames[category] || category;
+
+  return `
+    <form class="inline-admin-form content-card" data-inline-content-form data-category="${category}" data-content-id="${item?.id || ""}">
+      <input type="hidden" name="category" value="${category}" />
+
+      <div class="form-title-row">
+        <div>
+          <p class="eyebrow">${isEditing ? "Editar conteúdo" : "Novo conteúdo"}</p>
+          <h3>${isEditing ? escapeHtml(item.title) : "Adicionar em " + escapeHtml(label)}</h3>
+          <p class="muted-text">Salve aqui mesmo sem sair desta seção.</p>
+        </div>
+        <button class="ghost-button" type="button" data-cancel-inline-form>Cancelar</button>
+      </div>
+
+      <label>Título</label>
+      <input name="title" type="text" required value="${escapeAttribute(item?.title || "")}" placeholder="Ex: Equipamento não comunica" />
+
+      <div class="admin-two-columns">
+        <div>
+          <label>Seção</label>
+          <input type="text" value="${escapeAttribute(label)}" disabled />
+        </div>
+        <div>
+          <label>Status</label>
+          <select name="published">
+            <option value="true" ${item?.published === false ? "" : "selected"}>Publicado</option>
+            <option value="false" ${item?.published === false ? "selected" : ""}>Rascunho</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Descrição</label>
+      <textarea name="description" rows="3" required placeholder="Resumo que aparece no card.">${escapeHtml(item?.description || "")}</textarea>
+
+      <label>Tags separadas por vírgula</label>
+      <input name="tags" type="text" value="${escapeAttribute((item?.tags || []).join(", "))}" placeholder="RHID, Rede, AFD, Portaria 671" />
+
+      <label>Palavras-chave separadas por vírgula</label>
+      <input name="keywords" type="text" value="${escapeAttribute((item?.keywords || []).join(", "))}" placeholder="senha, IP, cadastro, comunicação" />
+
+      <label>Possíveis causas, uma por linha</label>
+      <textarea name="causes" rows="4" placeholder="Use principalmente para Erros Comuns.">${escapeHtml((item?.causes || []).join("\n"))}</textarea>
+
+      <label>Passos / análise / checklist, um por linha</label>
+      <textarea name="steps" rows="6" placeholder="Cada linha vira um item no card.">${escapeHtml((item?.steps || item?.analysis || []).join("\n"))}</textarea>
+
+      <label>Solução / resposta final</label>
+      <textarea name="solution" rows="4" placeholder="Solução recomendada ou resposta da FAQ.">${escapeHtml(item?.solution || item?.answer || "")}</textarea>
+
+      <label>Orientação pronta para copiar</label>
+      <textarea name="readyAnswer" rows="4" placeholder="Opcional. Se deixar vazio, o sistema monta uma orientação automática.">${escapeHtml(item?.ready_answer || "")}</textarea>
+
+      <div class="notes-actions">
+        <button class="primary-button" type="submit">${isEditing ? "Salvar alterações" : "Cadastrar conteúdo"}</button>
+        <button class="ghost-button" type="button" data-cancel-inline-form>Cancelar</button>
+      </div>
+    </form>
+  `;
 }
 
 function parseCommaList(value) {
