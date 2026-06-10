@@ -1188,9 +1188,9 @@ const categoryNames = {
   rhid: "RHID",
   idclass: "REP iDClass",
   idface: "iDFace",
-  nuvem: "Comunicação com a Nuvem",
+  nuvem: "Comunicação & iDCloud",
   erros: "Erros Comuns",
-  procedimentos: "Procedimentos",
+  procedimentos: "Repositórios",
   faq: "FAQ"
 };
 
@@ -2454,7 +2454,6 @@ function renderAdminList() {
             <p>${escapeHtml(item.description || "")}</p>
             <div class="admin-item-actions">
               <button class="card-action" data-edit-content="${item.id}" data-edit-mode="admin">Editar no Admin</button>
-              <button class="card-action" data-edit-content="${item.id}" data-edit-mode="inline">Editar na seção</button>
               <button class="ghost-button danger" data-delete-content="${item.id}">Excluir</button>
             </div>
           </article>
@@ -2557,3 +2556,4 @@ function parseLineList(value) {
     .map(item => item.trim())
     .filter(Boolean);
 }
+

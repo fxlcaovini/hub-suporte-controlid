@@ -904,7 +904,68 @@
     border-color: rgba(227, 6, 19, 0.72);
     box-shadow: 0 0 0 4px var(--primary-soft);
   }
-  
+  .form-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Subtítulos de seções internas */
+.form-section-subtitle {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Colunas do formulário */
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Respiro consistente entre os campos */
+}
+
+/* Grupos de label + input */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Ajuste fino nos campos de digitação */
+.form-column input[type="text"],
+.form-column select,
+.form-column textarea {
+  width: 100%;
+  margin-bottom: 0 !important; /* Remove margens antigas soltas */
+}
+
+/* Barra de ações inferior expandida */
+.form-footer-actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  justify-content: flex-end;
+}
+
+/* Responsividade: Telas maiores dividem em 2 colunas perfeitamente */
+@media (min-width: 1024px) {
+  .form-grid-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
   .user-pill {
     min-height: 42px;
     display: inline-flex;
@@ -1171,5 +1232,6 @@
     .admin-category-tab {
       justify-content: space-between;
     }
+    
   }
   

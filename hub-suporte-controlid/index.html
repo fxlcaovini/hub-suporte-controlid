@@ -261,70 +261,98 @@
 
         <div class="admin-layout">
           <form class="admin-form content-card" id="adminContentForm">
-            <input type="hidden" id="adminContentId" />
+  <input type="hidden" id="adminContentId" />
 
-            <div class="form-title-row">
-              <div>
-                <p class="eyebrow">Conteúdo</p>
-                <h3 id="adminFormTitle">Novo tópico</h3>
-              </div>
-              <button class="ghost-button" type="button" id="newContentButton">Novo</button>
-            </div>
+  <div class="form-title-row">
+    <div>
+      <p class="eyebrow">Painel de Controle</p>
+      <h3 id="adminFormTitle">Novo tópico</h3>
+    </div>
+    <button class="ghost-button" type="button" id="newContentButton">Novo</button>
+  </div>
 
-            <label for="adminTitle">Título</label>
-            <input type="text" id="adminTitle" required placeholder="Ex: Equipamento não comunica" />
+  <div class="form-grid-container">
+    
+    <div class="form-column">
+      <h4 class="form-section-subtitle">1. Classificação & Resumo</h4>
+      
+      <div class="form-group">
+        <label for="adminTitle">Título do Tópico</label>
+        <input type="text" id="adminTitle" required placeholder="Ex: Equipamento não comunica" />
+      </div>
 
-            <div class="admin-two-columns">
-              <div>
-                <label for="adminCategory">Seção</label>
-                <select id="adminCategory" required>
-                  <option value="primeiros-passos">Primeiros Passos</option>
-                  <option value="rhid">RHID</option>
-                  <option value="idclass">REP iDClass</option>
-                  <option value="idface">iDFace</option>
-                  <option value="nuvem">Comunicação</option>
-                  <option value="erros">Erros Comuns</option>
-                  <option value="procedimentos">Procedimentos</option>
-                  <option value="faq">FAQ</option>
-                </select>
-              </div>
+      <div class="admin-two-columns">
+        <div class="form-group">
+          <label for="adminCategory">Seção de Destino</label>
+          <select id="adminCategory" required>
+            <option value="primeiros-passos">Primeiros Passos</option>
+            <option value="rhid">RHID</option>
+            <option value="idclass">REP iDClass</option>
+            <option value="idface">iDFace</option>
+            <option value="nuvem">Comunicação</option>
+            <option value="erros">Erros Comuns</option>
+            <option value="procedimentos">Procedimentos</option>
+            <option value="faq">FAQ</option>
+          </select>
+        </div>
 
-              <div>
-                <label for="adminPublished">Status</label>
-                <select id="adminPublished">
-                  <option value="true">Publicado</option>
-                  <option value="false">Rascunho</option>
-                </select>
-              </div>
-            </div>
+        <div class="form-group">
+          <label for="adminPublished">Status de Publicação</label>
+          <select id="adminPublished">
+            <option value="true">Publicado</option>
+            <option value="false">Rascunho</option>
+          </select>
+        </div>
+      </div>
 
-            <label for="adminDescription">Descrição</label>
-            <textarea id="adminDescription" rows="3" required placeholder="Resumo que aparece no card."></textarea>
+      <div class="form-group">
+        <label for="adminTags">Tags (Separadas por vírgula)</label>
+        <input type="text" id="adminTags" placeholder="RHID, Rede, Portaria 671" />
+      </div>
 
-            <label for="adminTags">Tags separadas por vírgula</label>
-            <input type="text" id="adminTags" placeholder="RHID, Rede, AFD, Portaria 671" />
+      <div class="form-group">
+        <label for="adminKeywords">Palavras-chave de busca</label>
+        <input type="text" id="adminKeywords" placeholder="senha, IP, cadastro" />
+      </div>
 
-            <label for="adminKeywords">Palavras-chave separadas por vírgula</label>
-            <input type="text" id="adminKeywords" placeholder="senha, IP, cadastro, comunicação" />
+      <div class="form-group">
+        <label for="adminDescription">Descrição Curta (Resumo do Card)</label>
+        <textarea id="adminDescription" rows="3" required placeholder="Breve resumo explicativo que aparece na listagem principal."></textarea>
+      </div>
+    </div>
 
-            <label for="adminCauses">Possíveis causas, uma por linha</label>
-            <textarea id="adminCauses" rows="4" placeholder="Use principalmente para Erros Comuns."></textarea>
+    <div class="form-column">
+      <h4 class="form-section-subtitle">2. Conteúdo Técnico</h4>
 
-            <label for="adminSteps">Passos / análise / checklist, um por linha</label>
-            <textarea id="adminSteps" rows="6" placeholder="Cada linha vira um item no card."></textarea>
+      <div class="form-group">
+        <label for="adminCauses">Possíveis Causas (Uma por linha)</label>
+        <textarea id="adminCauses" rows="3" placeholder="Identifique o que gera o problema (recomendado para Erros Comuns)."></textarea>
+      </div>
 
-            <label for="adminSolution">Solução / resposta final</label>
-            <textarea id="adminSolution" rows="4" placeholder="Solução recomendada ou resposta da FAQ."></textarea>
+      <div class="form-group">
+        <label for="adminSteps">Passos / Checklist de Análise (Um por linha)</label>
+        <textarea id="adminSteps" rows="4" placeholder="Passo 1: Verificar cabo&#10;Passo 2: Testar ping..."></textarea>
+      </div>
 
-            <label for="adminReadyAnswer">Orientação pronta para copiar</label>
-            <textarea id="adminReadyAnswer" rows="4" placeholder="Opcional. Se deixar vazio, o sistema monta uma orientação automática."></textarea>
+      <div class="form-group">
+        <label for="adminSolution">Solução / Resposta Final</label>
+        <textarea id="adminSolution" rows="3" placeholder="Procedimento definitivo para resolver o problema ou resposta da FAQ."></textarea>
+      </div>
 
-            <div class="notes-actions">
-              <button class="primary-button" type="submit">Salvar conteúdo</button>
-              <button class="ghost-button" type="button" id="refreshContentButton">Atualizar lista</button>
-            </div>
-            <p class="save-status" id="adminStatus" aria-live="polite"></p>
-          </form>
+      <div class="form-group">
+        <label for="adminReadyAnswer">Orientação Pronta (Cópia Rápida para o Operador)</label>
+        <textarea id="adminReadyAnswer" rows="3" placeholder="Texto pronto para o atendente copiar e enviar ao cliente (Opcional)."></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="form-footer-actions">
+    <button class="primary-button" type="submit">Salvar conteúdo</button>
+    <button class="ghost-button" type="button" id="refreshContentButton">Atualizar lista</button>
+  </div>
+  <p class="save-status" id="adminStatus" aria-live="polite"></p>
+</form>
 
           <div class="admin-list content-card">
             <div class="form-title-row">
