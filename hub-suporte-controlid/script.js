@@ -1,11 +1,4 @@
-/* ==========================================================
-   Hub de Suporte Control iD
-   Visual original preservado + Supabase Auth/Banco/Admin.
-   ========================================================== */
 
-// Configure com os dados do seu projeto Supabase.
-// Use somente Project URL e publishable/anon public key.
-// Nunca coloque service_role ou secret key no frontend.
 const SUPABASE_URL = "https://rutzxvmiadxoghaiqyvh.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_UdFT4GrIpB4f4vrbWC5Btg_vpvwZfiW";
 
